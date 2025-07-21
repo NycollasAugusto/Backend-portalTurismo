@@ -1,34 +1,31 @@
 // Importa a instância do Sequelize configurada e o modelo de usuário
 const sequelize = require('./config/db');
-const User = require('./models/users');
+require('dotenv').config();
+const express = require('express')
+const cors = require('cors');
+const userRoutes = require('./routes/userRoutes')
+const contactRoutes = require('./routes/contactRoutes')
+const authRoutes = require('./routes/authRoutes')
+const app = express();
  
-(async () => {
-  try {
+app.use(express.json());
  
-    await sequelize.authenticate();
-    console.log("Conexão com o banco de dados estabelecida com sucesso!");
+app.use(cors());
  
+app.get('/', (req, res)=> res.send('api funcionando'))
  
-    await sequelize.sync({ force: true });
-    console.log("Banco sincronizado com sucesso!");
+app.use('/api/users', userRoutes)
+app.use('/api/contacts', contactRoutes)
+app.use('/api/auth', authRoutes)
  
+const PORT = process.env.PORT;
  
-    const novoUsuario = await User.create({
-      name: 'Maria da Silva',
-      email: 'maria@email.com',
-      password: 'senha123'
-    });
- 
- 
-    console.log("Usuário cadastrado com sucesso!", novoUsuario.toJSON());
- 
-  } catch (erro) {
- 
-    console.error("Erro ao se conectar com o banco de dados:", erro);
-  } finally {
-   
-    await sequelize.close();
-  }
-})();
- 
- 
+sequelize.authenticate()
+  .then(() => {
+    console.log('servidor online e conectado com o DB')
+    return sequelize.sync();
+  })
+  .then(() =>{
+    console.log('banco de dados sincronizado')
+    app.listen(PORT, () => console.log("SERVIDOR RODANDO NA PORTA: " + PORT))
+  }).catch(erro => console.log("Erro interno do servidor", erro))
