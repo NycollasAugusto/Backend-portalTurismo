@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const user = require('../controllers/userController')
+const user = require('../controller/userController')
  
 // ✅ Criar usuário (registro) — público
 router.post('/', user.createUser);
