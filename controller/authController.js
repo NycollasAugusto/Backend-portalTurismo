@@ -12,7 +12,7 @@ exports.login = async( req , res) =>{
         if (!user) return res.status(404).json({message: 'ususario nao encontrado'})
  
         const passwordValid = await bcrypt.compare(password , user.password)
-        if(passwordValid)return res.status(400).json({message: 'email ou senha incorretas'})
+        if(!passwordValid)return res.status(400).json({message: 'email ou senha incorretas'})
        
         res.json({message: 'Login realizado com sucesso',
         user : {id: user.id, name : user.name, email: user.email}
